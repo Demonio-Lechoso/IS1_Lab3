@@ -70,22 +70,37 @@ df = cleanedText()
 x = df['News'] 
 y = df['Fake']
 
-x_train, _, y_train, _ = train_test_split(x, y)
+x_train, x_test, y_train, y_test = train_test_split(x, y)
 
 #convert text into numerical values in order to be used in the model
 tf_vectorizer = TfidfVectorizer(use_idf=True)
 x_train_tf = tf_vectorizer.fit_transform(x_train).toarray()
+x_test_tf = tf_vectorizer.fit_transform(x_test).toarray()
 
 # create a model
 model = Sequential()
 
-# Add an input layer and a output layer
-model.add(Dense(1, input_dim=x_train_tf.shape[1], activation='sigmoid'))  # output layer
+# Add an input layer
+model.add(Dense(16, input_dim=x_train_tf.shape[1], activation='relu')) 
+
+# Add first hidden layer
+model.add(Dense(8, activation='relu'))
+
+# Add second hidden layer
+model.add(Dense(4, activation='relu'))
+
+# Add output layer
+model.add(Dense(1, activation='sigmoid'))
 
 # Compile the model
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 
 # Fit the model
-model.fit(x_train_tf, y_train, epochs=10, batch_size=10)
+history = model.fit(x_train_tf, y_train, epochs=50, batch_size=10)
+
+# print the total loss and the training loss
+print("Total Loss:", history.history['loss'][-1])
+print("Training Loss:", history.history['val_loss'][-1])
+
 
 
