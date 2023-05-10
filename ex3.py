@@ -75,7 +75,7 @@ x_train, x_test, y_train, y_test = train_test_split(x, y)
 #convert text into numerical values in order to be used in the model
 tf_vectorizer = TfidfVectorizer(use_idf=True)
 x_train_tf = tf_vectorizer.fit_transform(x_train).toarray()
-x_test_tf = tf_vectorizer.fit_transform(x_test).toarray()
+x_test_tf = tf_vectorizer.transform(x_test).toarray()
 
 # create a model
 model = Sequential()
@@ -96,7 +96,7 @@ model.add(Dense(1, activation='sigmoid'))
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 
 # Fit the model
-history = model.fit(x_train_tf, y_train, epochs=50, batch_size=10)
+history = model.fit(x_train_tf, y_train, epochs=50, batch_size=10, validation_data=(x_test_tf, y_test))
 
 # print the total loss and the training loss
 print("Total Loss:", history.history['loss'][-1])
